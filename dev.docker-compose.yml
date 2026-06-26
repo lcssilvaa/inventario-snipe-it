@@ -1,5 +1,4 @@
-# Compose file to spin up a local Snipe-IT for development.
-
+# Compose file para desenvolvimento em tempo real (Live Reload)
 version: '3'
 
 services:
@@ -12,37 +11,41 @@ services:
       - "8000:80"
     depends_on:
       redis:
-        # The default needs to be stated.
         condition: service_started
-      mariadb:
+      mysql:
         condition: service_healthy
-        restart: true
     env_file:
       - .env.dev.docker
-
-  mariadb:
-    image: mariadb:11.4.7
     volumes:
-      - db:/var/lib/mysql
+      - .:/var/www/html
+      - ./docker/startup_alpine.sh:/startup.sh
+      - storage_dev:/var/lib/snipeit
+
+  mysql:
+    image: mysql:8.0
+    container_name: snipeit-mysql
+    volumes:
+      - db_dev:/var/lib/mysql
     env_file:
-      - .env.dev.docker
+      - .env.testing
     ports:
-      - "3306:3306"
+      - "3307:3306"
     healthcheck:
-      # https://mariadb.com/kb/en/using-healthcheck-sh/#compose-file-example
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
       timeout: 2s
       retries: 5
 
   redis:
     image: redis:7.4.3
+    container_name: snipeit-redis
 
   mailhog:
     image: mailhog/mailhog:v1.0.1
+    container_name: snipeit-mailhog
     ports:
-      # - 1025:1025
       - "8025:8025"
 
 volumes:
-  db: {}
+  db_dev:
+  storage_dev:
