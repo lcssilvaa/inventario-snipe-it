@@ -15,7 +15,7 @@ services:
       mysql:
         condition: service_healthy
     env_file:
-      - .env.dev.docker
+      - .env.testing
     volumes:
       - .:/var/www/html
       - ./docker/startup_alpine.sh:/startup.sh

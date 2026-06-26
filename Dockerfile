@@ -124,7 +124,7 @@ USER root
 
 ############### DATA VOLUME #################
 
-VOLUME ["/var/lib/snipeit"]
+## ativar somente para dev. local, railway precisa estar desligado -  VOLUME ["/var/lib/snipeit"]
 
 ##### START SERVER
 
